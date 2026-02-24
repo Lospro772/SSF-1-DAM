@@ -17,13 +17,15 @@ echo "║       (Para archivos generados por random_files)     ║"
 echo "╚══════════════════════════════════════════════════════╝"
 echo -e "${NC}"
 
-# Crear carpetas si no existen (NOMBRES CONSISTENTES)
-mkdir -p imagenes documentos vacios 2>/dev/null
+# Crear carpetas si no existen
+mkdir -p imgs docs txts pdfs vacios 2>/dev/null
 
 # Contadores
 cont_imagenes=0
 cont_documentos=0
 cont_vacios=0
+cont_pdfs=0
+cont_txts=0  # CORREGIDO: quitado el espacio
 
 echo -e "${YELLOW}Organizando archivos...${NC}"
 echo
@@ -36,7 +38,7 @@ for archivo in *; do
     fi
 
     # Saltar los scripts propios
-    if [[ "$archivo" == "limpiador.sh" ]] || [[ "$archivo" == "random_files.sh" ]]; then
+    if [[ "$extension" == "sh" ]]; then
         continue
     fi
 
@@ -48,15 +50,21 @@ for archivo in *; do
         echo -e "${MAGENTA}📁 Moviendo archivo VACÍO: $archivo → /vacios/${NC}"
         mv "$archivo" "vacios/" 2>/dev/null && ((cont_vacios++))
 
-    # Imágenes
-    elif [[ "$extension" == "jpg" ]] || [[ "$extension" == "png" ]] || [[ "$extension" == "gif" ]] || [[ "$extension" == "bmp" ]]; then
-        echo -e "${BLUE}📷 Imagen: $archivo → /imagenes/${NC}"
-        mv "$archivo" "imagenes/" 2>/dev/null && ((cont_imagenes++))
+    elif [[ "$extension" == "jpg" ]] || [[ "$extension" == "png" ]] || [[ "$extension" == "gif" ]] || [[ "$extension" == "bmp" ]]; then 
+        echo -e "${BLUE}📷 Imagen: $archivo → /imgs/${NC}"
+        mv "$archivo" "imgs/" 2>/dev/null && ((cont_imagenes++))
 
-    # Documentos (incluye txt, pdf, doc, odt, java)
-    elif [[ "$extension" == "txt" ]] || [[ "$extension" == "pdf" ]] || [[ "$extension" == "doc" ]] || [[ "$extension" == "odt" ]] || [[ "$extension" == "java" ]]; then
-        echo -e "${GREEN}📄 Documento: $archivo → /documentos/${NC}"
-        mv "$archivo" "documentos/" 2>/dev/null && ((cont_documentos++))
+    elif [[ "$extension" == "doc" ]] || [[ "$extension" == "odt" ]] || [[ "$extension" == "java" ]]; then 
+        echo -e "${GREEN}📄 Documento: $archivo → /docs/${NC}"
+        mv "$archivo" "docs/" 2>/dev/null && ((cont_documentos++))
+
+    elif [[ "$extension" == "pdf" ]]; then
+        echo -e "${GREEN}📄 PDF: $archivo → /pdfs/${NC}"
+        mv "$archivo" "pdfs/" 2>/dev/null && ((cont_pdfs++))
+
+    elif [[ "$extension" == "txt" ]]; then
+        echo -e "${GREEN}📄 TXT: $archivo → /txts/${NC}"
+        mv "$archivo" "txts/" 2>/dev/null && ((cont_txts++))
 
     else
         echo -e "${RED}❌ No se movió: $archivo (extensión: .$extension)${NC}"
@@ -67,17 +75,21 @@ done
 echo
 echo -e "${CYAN}══════════════════════════════════════════════════════${NC}"
 echo -e "${YELLOW}📊 RESUMEN DE ORGANIZACIÓN:${NC}"
-echo -e "${BLUE}📷 Imágenes movidas: $cont_imagenes${NC}"
-echo -e "${GREEN}📄 Documentos movidos: $cont_documentos${NC}"
-echo -e "${MAGENTA}📁 Archivos vacíos movidos: $cont_vacios${NC}"
+echo -e "${BLUE}📷 Imágenes movidas (imgs/): $cont_imagenes${NC}"
+echo -e "${GREEN}📄 Documentos movidos (docs/): $cont_documentos${NC}"
+echo -e "${GREEN}📑 PDFs movidos (pdfs/): $cont_pdfs${NC}"
+echo -e "${GREEN}📝 TXTs movidos (txts/): $cont_txts${NC}"
+echo -e "${MAGENTA}📁 Archivos vacíos movidos (vacios/): $cont_vacios${NC}"
 echo -e "${CYAN}══════════════════════════════════════════════════════${NC}"
 
 # Mostrar ubicaciones
 echo
 echo -e "${GREEN}✅ Archivos organizados exitosamente:${NC}"
-echo -e "  ${BLUE}📷 imagenes/   → .jpg .png .gif .bmp${NC}"
-echo -e "  ${GREEN}📄 documentos/ → .txt .pdf .doc .odt .java${NC}"
-echo -e "  ${MAGENTA}📁 vacios/     → Archivos de 0 bytes${NC}"
+echo -e "  ${BLUE}📷 imgs/    → .jpg .png .gif .bmp${NC}"
+echo -e "  ${GREEN}📄 docs/    → .doc .odt .java${NC}"
+echo -e "  ${GREEN}📑 pdfs/    → .pdf${NC}"
+echo -e "  ${GREEN}📝 txts/    → .txt${NC}"
+echo -e "  ${MAGENTA}📁 vacios/  → Archivos de 0 bytes${NC}"
 echo
 echo -e "${GREEN}╔════════════════════════════════════════╗${NC}"
 echo -e "${GREEN}║   ORGANIZACIÓN COMPLETADA CON ÉXITO   ║${NC}"
